@@ -1,14 +1,13 @@
 
 CREATE OR REPLACE VIEW vw_sales_daily AS
 SELECT 
-    DATE(o.created_at) AS fecha,
-    COUNT(o.id) AS total_tickets,
-    SUM(p.paid_amount) AS total_ventas,
-    ROUND(AVG(p.paid_amount), 2) AS ticket_promedio
+    DATE(o.created_at) AS sale_date,
+    CAST(COUNT(o.id) AS BIGINT) AS total_tickets,
+    CAST(SUM(p.paid_amount) AS DECIMAL(10,2)) AS total_revenue,
+    CAST(ROUND(AVG(p.paid_amount), 2) AS DECIMAL(10,2)) AS ticket_promedio
 FROM orders o
 JOIN payments p ON o.id = p.order_id
 GROUP BY DATE(o.created_at);
-
 
 CREATE OR REPLACE VIEW vw_top_products_ranked AS
 SELECT 
@@ -19,7 +18,6 @@ SELECT
 FROM order_items oi
 JOIN products p ON oi.product_id = p.id
 GROUP BY p.id, p.name;
-
 
 CREATE OR REPLACE VIEW vw_inventory_risk AS
 SELECT 
