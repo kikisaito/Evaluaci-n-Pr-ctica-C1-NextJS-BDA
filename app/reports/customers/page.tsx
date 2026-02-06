@@ -1,11 +1,16 @@
 import { pool } from '@/lib/db';
 import Link from 'next/link';
 
-export default async function CustomersReport({ searchParams }: { searchParams: { page?: string } }) {
-  const page = parseInt(searchParams.page || '1');
-  const limit = 5; // Número de registros por página de 5 en 5, intente con 3 pero por alguna razón fallaba
-  const offset = (page - 1) * limit;
+type Props = {
+  searchParams: Promise<{ page?: string }>;
+};
 
+export default async function CustomersReport({ searchParams }: Props) {
+
+  const params = await searchParams;
+  const page = parseInt(params.page || '1');
+  const limit = 5; // intente mostrar mas pero curiosamente si ponia 3 crasheaba XD
+  const offset = (page - 1) * limit;
 
   const { rows } = await pool.query(
     'SELECT * FROM vw_customer_value LIMIT $1 OFFSET $2',
@@ -21,7 +26,6 @@ export default async function CustomersReport({ searchParams }: { searchParams: 
         <p className="text-gray-500 italic">Insight: Identificación de clientes frecuentes y lealtad.</p>
       </header>
 
-    
       <div className="mb-8 p-6 bg-green-50 border border-green-100 rounded-xl">
         <p className="text-sm text-green-600 font-semibold uppercase">Cliente Top</p>
         <p className="text-2xl font-bold">{rows[0]?.cliente || 'Sin datos'}</p>
@@ -48,7 +52,6 @@ export default async function CustomersReport({ searchParams }: { searchParams: 
         </table>
       </div>
 
-    
       <div className="mt-6 flex gap-4">
         <Link 
           href={`?page=${Math.max(1, page - 1)}`}
