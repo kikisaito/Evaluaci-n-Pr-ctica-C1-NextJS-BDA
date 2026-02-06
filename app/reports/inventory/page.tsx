@@ -1,5 +1,6 @@
 import { pool } from '@/lib/db';
 import Link from 'next/link';
+export const dynamic = 'force-dynamic';
 
 export default async function InventoryReport() {
   const { rows } = await pool.query('SELECT * FROM vw_inventory_risk');

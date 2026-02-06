@@ -1,5 +1,6 @@
 import { pool } from '@/lib/db';
 import Link from 'next/link';
+export const dynamic = 'force-dynamic';
 
 export default async function PaymentsReport() {
   // Consumimos la VIEW de mezcla de pagos :3
