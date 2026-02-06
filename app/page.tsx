@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <main className="p-10 bg-gray-50 min-h-screen text-black font-sans">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-black text-center mb-12">☕ Analytics Cafetería UP</h1>
+        <h1 className="text-4xl font-black text-center mb-12"> Cafetería UP</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reportes.map((rep) => (
