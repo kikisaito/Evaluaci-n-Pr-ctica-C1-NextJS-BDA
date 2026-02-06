@@ -10,7 +10,7 @@ export default async function PaymentsReport() {
       <Link href="/" className="text-blue-600 hover:underline">← Volver al Dashboard</Link>
       
       <header className="mt-6 mb-8">
-        <h1 className="text-3xl font-bold">💳 Mezcla de Pagos</h1>
+        <h1 className="text-3xl font-bold">Mezcla de Pagos</h1>
         <p className="text-gray-500 italic">Insight: Distribución de ingresos por método de pago.</p>
       </header>
 
