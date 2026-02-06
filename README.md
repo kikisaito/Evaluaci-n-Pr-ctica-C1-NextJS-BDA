@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ Cafetería Dashboard - Evaluación Práctica C1
+Este proyecto es una aplicación web desarrollada con Next.js y PostgreSQL montada sobre Docker, diseñada para gestionar y visualizar reportes de una cafetería.
 
-## Getting Started
+Requisitos Previos
+Para ejecutar este proyecto, asegúrate de tener instalado:
 
-First, run the development server:
+Docker Desktop (con Docker Compose habilitado).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Un navegador web actualizado.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ Configuración e Instalación
+Sigue estos pasos para levantar el entorno desde cero:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Variables de Entorno (Seguridad)
+Por motivos de seguridad y siguiendo las buenas prácticas, las credenciales de la base de datos no están incluidas en el repositorio.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Localiza el archivo llamado .env.example.
 
-## Learn More
+Crea una copia de este archivo y renómbralo a .env.
 
-To learn more about Next.js, take a look at the following resources:
+Asegúrate de que el contenido del archivo .env coincida con las credenciales de tu preferencia, por ejemplo:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Fragmento de código
+DB_USER=postgres
+DB_PASSWORD=tu_contraseña_aqui
+DB_NAME=postgres
+DB_HOST=db
+DATABASE_URL="postgresql://postgres:tu_contraseña_aqui@db:5432/postgres"
+2. Despliegue con Docker
+Abre una terminal en la carpeta del proyecto y ejecuta:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+PowerShell
+docker compose up --build
+Nota: El sistema inicializará automáticamente la base de datos, creará las tablas, las vistas de reportes y cargará datos de prueba (seeding).
 
-## Deploy on Vercel
+ Acceso al Sistema
+Una vez que la terminal indique que el servidor está listo (✓ Ready), podrás acceder mediante:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+URL: http://localhost:3001
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Puerto de la App: 3001 (Configurado para evitar conflictos con servicios locales en el puerto 3000).
+
+Puerto de la BD: 5432.
+
+ Reportes Disponibles
+El dashboard incluye visualizaciones automáticas basadas en vistas de SQL para:
+
+Ventas generales (sales).
+
+Ranking de productos.
+
+Estado del inventario.
+
+Pagos y Clientes.
+
+ Solución de Problemas Comunes
+Error de conexión a BD: Asegúrate de que el nombre del host en el .env sea db y no localhost.
+
+Puerto 3000 ocupado: Este proyecto utiliza el puerto 3001 de forma externa para evitar este conflicto común en entornos de desarrollo.
+
+Datos no visibles: El script de inicialización (seed.sql) se ejecuta solo la primera vez que se crea el volumen. Si cambias la contraseña, usa docker compose down -v y levanta de nuevo para resetearlo.
