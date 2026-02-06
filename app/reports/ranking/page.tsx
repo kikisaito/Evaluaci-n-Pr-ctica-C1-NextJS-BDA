@@ -1,19 +1,19 @@
 import { pool } from '@/lib/db';
 import Link from 'next/link';
 
-export default async function RankingReport({ 
-  searchParams 
-}: { 
-  searchParams: { search?: string, page?: string } 
-}) {
-  const search = searchParams.search || '';
-  const page = parseInt(searchParams.page || '1');
+type Props = {
+  searchParams: Promise<{ search?: string; page?: string }>;
+};
+
+export default async function RankingReport({ searchParams }: Props) {
+  const params = await searchParams;
+  
+  const search = params.search || '';
+  const page = parseInt(params.page || '1');
   const limit = 5;
   const offset = (page - 1) * limit;
 
-  // Consulta con filtro de búsqueda (ILIKE) y paginación
-  // Usamos la VIEW vw_top_products_ranked que tiene la Window Function (RANK) 
-  //tu sabias q chingon es maching gone XD
+
   const { rows } = await pool.query(
     `SELECT * FROM vw_top_products_ranked 
      WHERE producto ILIKE $1 
@@ -45,7 +45,7 @@ export default async function RankingReport({
         </form>
       </header>
 
-      {/* KPI del Producto #1 */}
+    
       <div className="mb-8 p-6 bg-yellow-50 border border-yellow-200 rounded-2xl shadow-sm">
         <h3 className="text-yellow-700 font-bold uppercase text-xs tracking-widest">Producto Estrella</h3>
         <p className="text-3xl font-black text-gray-900 mt-1">
