@@ -49,7 +49,7 @@ export default async function RankingReport({ searchParams }: Props) {
       <div className="mb-8 p-6 bg-yellow-50 border border-yellow-200 rounded-2xl shadow-sm">
         <h3 className="text-yellow-700 font-bold uppercase text-xs tracking-widest">Producto Estrella</h3>
         <p className="text-3xl font-black text-gray-900 mt-1">
-          {rows.find(r => r.ranking === 1)?.producto || '---'}
+          {rows[0]?.producto || '---'}
         </p>
       </div>
 
