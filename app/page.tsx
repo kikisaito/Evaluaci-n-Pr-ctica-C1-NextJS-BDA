@@ -1,33 +1,34 @@
-import { pool } from '@/lib/db';
+import Link from 'next/link';
 
-export default async function Page() {
-  // Consultamos la vista que creamos en Postgres
-  const { rows } = await pool.query('SELECT * FROM vw_sales_daily');
+export default function Home() {
+  const reportes = [
+    { id: 1, nombre: 'Ventas Diarias', path: '/reports/sales', desc: 'Ingresos y tickets por día.' },
+    { id: 2, nombre: 'Inventario', path: '/reports/inventory', desc: 'Productos en riesgo de stock.' },
+    { id: 3, nombre: 'Ranking', path: '/reports/ranking', desc: 'Top productos por ingresos.' },
+    { id: 4, nombre: 'Clientes', path: '/reports/customers', desc: 'Valor y gasto por cliente.' },
+    { id: 5, nombre: 'Pagos', path: '/reports/payments', desc: 'Mezcla de métodos de pago.' },
+  ];
 
   return (
-    <main className="p-10 font-sans bg-white min-h-screen text-black">
-      <h1 className="text-3xl font-bold mb-4">☕ Avance: Analytics Cafetería</h1>
-      <p className="mb-8 text-gray-600">Matrícula: 243831 - Jaitovich Jimenez</p>
-
-      <div className="border rounded-lg shadow-md overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-4 border-b">Fecha de Venta</th>
-              <th className="p-4 border-b">Total Tickets</th>
-              <th className="p-4 border-b">Ingreso (MXN)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row: any, i: number) => (
-              <tr key={i} className="hover:bg-gray-50">
-                <td className="p-4 border-b">{new Date(row.sale_date).toLocaleDateString()}</td>
-                <td className="p-4 border-b">{row.total_tickets}</td>
-                <td className="p-4 border-b font-bold text-green-600">${row.total_revenue}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <main className="p-10 bg-gray-50 min-h-screen text-black font-sans">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl font-black text-center mb-12">☕ Analytics Cafetería UP</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {reportes.map((rep) => (
+            <Link key={rep.id} href={rep.path} className="group">
+              <div className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm group-hover:shadow-md group-hover:border-blue-500 transition-all">
+                <h2 className="text-xl font-bold text-gray-800 group-hover:text-blue-600">
+                  {rep.nombre}
+                </h2>
+                <p className="text-gray-500 mt-2 text-sm">{rep.desc}</p>
+                <div className="mt-4 text-blue-500 font-semibold text-xs uppercase tracking-widest">
+                  Ver reporte →
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </main>
   );
