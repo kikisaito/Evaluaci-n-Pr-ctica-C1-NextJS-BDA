@@ -1,14 +1,28 @@
-import { pool } from '@/lib/db';
+'use client';
 import Link from 'next/link';
-export const dynamic = 'force-dynamic';
+import { useState, useEffect } from 'react';
 
-export default async function SalesReport() {
-  const { rows } = await pool.query('SELECT * FROM vw_sales_daily');
+import { fetchSales } from '@/app/services/api';
+
+export default function SalesReport() {
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSales().then(data => {
+      setRows(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return <div className="p-10 text-center">Cargando...</div>;
+  }
 
   return (
     <div className="p-10 bg-white min-h-screen text-black">
       <Link href="/" className="text-blue-600 hover:underline">← Volver al Dashboard</Link>
-      
+
       <header className="mt-6 mb-8">
         <h1 className="text-3xl font-bold"> Reporte de Ventas Diarias</h1>
         <p className="text-gray-500 italic">Análisis de ingresos y tickets (Matrícula: 243831)</p>

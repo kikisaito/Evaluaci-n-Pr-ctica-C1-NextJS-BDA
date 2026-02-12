@@ -15,13 +15,28 @@ services:
       - ./db/seed.sql:/docker-entrypoint-initdb.d/3-seed.sql
       - ./db/roles.sql:/docker-entrypoint-initdb.d/4-roles.sql
 
+  backend:
+    build: ./backend
+    container_name: cafeteria_backend_cont
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - PORT=4000
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
   app:
     build: .
     container_name: cafeteria_app_cont
     ports:
-      - "3000:3000"
+      - "3005:3000"
     environment:
-      
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
     depends_on:
       - db
+      - backend
