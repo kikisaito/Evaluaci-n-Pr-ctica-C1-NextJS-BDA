@@ -4,98 +4,93 @@
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue) 
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
 
-Este proyecto es una aplicación web desarrollada con **Next.js** y **PostgreSQL**, orquestada mediante **Docker**, diseñada para gestionar y visualizar reportes estratégicos de una cafetería.
+Este proyecto es una aplicación web full-stack desarrollada con **Next.js** y **PostgreSQL**, orquestada mediante **Docker**. Está diseñada para funcionar en cualquier entorno que soporte Docker, sin necesidad de instalar Node.js o PostgreSQL localmente.
 
 ---
 
 ## 🛠️ Requisitos Previos
 
-Para ejecutar este proyecto sin errores, asegúrate de tener instalado:
+Para ejecutar este proyecto en cualquier sistema operativo (Windows, Mac, Linux), solo necesitas:
 
-* 🐳 **Docker Desktop** (con Docker Compose habilitado)
-* 🌐 Un navegador web actualizado (Chrome, Edge, Firefox, etc.)
+* 🐳 **Docker Desktop** (o Docker Engine + Docker Compose)
+* 🐙 **Git** (opcional, para clonar el repositorio)
 
 ---
 
-## 🚀 Configuración e Instalación
+## 🚀 Guía de Inicio Rápido (Universal)
 
-Sigue estos pasos para levantar el entorno de desarrollo desde cero.
+Sigue estos pasos para levantar el proyecto en minutos.
 
-### 1. Variables de Entorno (Seguridad 🔒)
+### 1. Clonar el repositorio
+Si tienes Git instalado:
+```bash
+git clone https://github.com/kikisaito/Evaluaci-n-Pr-ctica-C1-NextJS-BDA.git
+cd "Evaluaci-n-Pr-ctica-C1-NextJS-BDA"
+```
+*O descarga el código como ZIP y descomprímelo.*
 
-> **Nota Importante:** Siguiendo las buenas prácticas de seguridad y desarrollo, las credenciales de la base de datos **no** están expuestas en el repositorio.
+### 2. Configurar Variables de Entorno
+El proyecto necesita un archivo `.env` para funcionar. 
 
-1. Localiza el archivo llamado `.env.example` en la raíz del proyecto
-2. Crea una copia de este archivo y renómbralo a `.env`
-3. Configura tus credenciales. El contenido debe verse así para funcionar correctamente con Docker:
+1. Crea un archivo llamado `.env` en la raíz del proyecto (al mismo nivel que `docker-compose.yml`).
+2. Copia y pega el siguiente contenido (configuración por defecto lista para Docker):
+
 ```env
+# Configuración de Base de Datos
 DB_USER=postgres
-DB_PASSWORD=tu_contraseña_aqui
+DB_PASSWORD=kiki123uwuA
 DB_NAME=postgres
 DB_HOST=db
-DATABASE_URL="postgresql://postgres:tu_contraseña_aqui@db:5432/postgres"
+
+# URLs de Conexión
+DATABASE_URL="postgresql://postgres:kiki123uwuA@db:5432/postgres"
+NEXT_PUBLIC_API_URL="http://localhost:4000"
 ```
 
-### 2. Despliegue con Docker 🐳
+### 3. Ejecutar con Docker 🐳
+Desde la terminal en la carpeta del proyecto, ejecuta:
 
-Abre una terminal en la carpeta del proyecto y ejecuta el siguiente comando:
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
-
-✅ **Nota:** El sistema inicializará automáticamente la base de datos, creará las tablas, las vistas de reportes y cargará datos de prueba (seeding) automáticamente la primera vez que se ejecute.
+*(Nota: En algunas versiones nuevas de Docker, el comando es `docker compose up --build` sin el guion).*
 
 ---
 
 ## 💻 Acceso al Sistema
 
-Una vez que la terminal indique que el servidor está listo (✓ Ready), podrás acceder a la aplicación:
+Una vez que veas los mensajes de éxito en la consola, accede a los servicios:
 
-| Servicio | Dirección | Descripción |
-|----------|-----------|-------------|
-| **Dashboard Web** | http://localhost:3000 | Interfaz de usuario principal |
-| **Base de Datos** | localhost:5432 | Conexión directa a PostgreSQL |
-
-> **¿Por qué el puerto 3001?** Se ha configurado externamente en el puerto 3001 para evitar conflictos con otros servicios locales que suelen ocupar el puerto 3000 por defecto.
-
----
-
-## 📊 Reportes Disponibles
-
-El dashboard incluye visualizaciones dinámicas basadas en Vistas SQL (VIEWS) para:
-
-* 📈 **Ventas generales** (Vista `sales`)
-* 🏆 **Ranking de productos más vendidos**
-* 📦 **Estado del inventario actual**
-* 💳 **Historial de Pagos y Clientes**
+| Servicio | URL | Descripción |
+|----------|-----|-------------|
+| **Dashboard (Frontend)** | [http://localhost:3005](http://localhost:3005) | Interfaz web principal |
+| **API Backend** | [http://localhost:4000](http://localhost:4000) | Servicio de datos |
+| **Base de Datos** | `localhost:5432` | PostgreSQL (Usuario: postgres, Pass: kiki123uwuA) |
 
 ---
 
-## ❓ Solución de Problemas Comunes
+## 📊 Características del Proyecto
 
-### 🔴 Error de conexión a BD
+* **Frontend**: Next.js 14 con App Router y Tailwind CSS.
+* **Backend**: Node.js/Express con TypeScript.
+* **Base de Datos**: PostgreSQL 15 con scripts de inicialización automática (Seeds).
+* **Infraestructura**: Docker Compose para orquestar todo el entorno.
 
-**Causa:** La aplicación busca la base de datos en una dirección incorrecta.
+---
 
-**Solución:** Asegúrate de que en tu archivo `.env`, el `DB_HOST` sea `db` (el nombre del servicio en Docker) y **NO** `localhost`.
+## ❓ Solución de Problemas
 
-### 🔴 Datos no visibles o error de autenticación inicial
+### 🔴 "Variable is not set" o errores de conexión
+Asegúrate de haber creado el archivo `.env` **exactamente** como se indica en el paso 2. Docker no leerá el archivo si se llama `.env.txt` o `env`.
 
-**Causa:** Si hubo un error en la contraseña la primera vez, el volumen de Docker queda guardado con el error.
+### 🔴 Datos antiguos o error de inicialización
+Si necesitas reiniciar la base de datos desde cero (borrar todos los datos y volver a crear las tablas):
 
-**Solución:** Reinicia el volumen para forzar una nueva carga de datos limpia:
 ```bash
-docker compose down -v
-docker compose up --build
+docker-compose down -v
+docker-compose up --build
 ```
-
----
-
-## 📝 Notas Adicionales
-
-* El proyecto utiliza contenedores para garantizar un entorno reproducible
-* Los datos de prueba se cargan automáticamente en el primer arranque
-* Las vistas SQL optimizan las consultas de reportes
+*El flag `-v` elimina los volúmenes persistentes de la base de datos.*
 
 ---
 
