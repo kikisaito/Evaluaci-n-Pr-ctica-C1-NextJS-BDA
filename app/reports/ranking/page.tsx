@@ -1,11 +1,11 @@
 'use client';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { fetchRanking } from '@/app/services/api';
 
-export default function RankingReport() {
+function RankingContent() {
   const searchParams = useSearchParams();
   const search = searchParams.get('search') || '';
   const page = parseInt(searchParams.get('page') || '1');
@@ -96,5 +96,13 @@ export default function RankingReport() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RankingReport() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Cargando ranking...</div>}>
+      <RankingContent />
+    </Suspense>
   );
 }

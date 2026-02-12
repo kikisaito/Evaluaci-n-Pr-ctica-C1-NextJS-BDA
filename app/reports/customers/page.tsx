@@ -1,11 +1,11 @@
 'use client';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { fetchCustomers } from '@/app/services/api';
 
-export default function CustomersReport() {
+function CustomersContent() {
   // 🟢 FRONTEND: Hooks de React (Solo funcionan en el navegador)
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get('page') || '1');
@@ -78,5 +78,13 @@ export default function CustomersReport() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function CustomersReport() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Cargando reporte de clientes...</div>}>
+      <CustomersContent />
+    </Suspense>
   );
 }
