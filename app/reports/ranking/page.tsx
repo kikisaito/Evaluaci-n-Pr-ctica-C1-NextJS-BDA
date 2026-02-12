@@ -1,42 +1,43 @@
-import { pool } from '@/lib/db';
+'use client';
 import Link from 'next/link';
-export const dynamic = 'force-dynamic';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
-type Props = {
-  searchParams: Promise<{ search?: string; page?: string }>;
-};
+import { fetchRanking } from '@/app/services/api';
 
-export default async function RankingReport({ searchParams }: Props) {
-  const params = await searchParams;
-  
-  const search = params.search || '';
-  const page = parseInt(params.page || '1');
-  const limit = 5;
-  const offset = (page - 1) * limit;
+export default function RankingReport() {
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search') || '';
+  const page = parseInt(searchParams.get('page') || '1');
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    fetchRanking(search, page).then(data => {
+      setRows(data);
+      setLoading(false);
+    });
+  }, [search, page]);
 
-  const { rows } = await pool.query(
-    `SELECT * FROM vw_top_products_ranked 
-     WHERE producto ILIKE $1 
-     LIMIT $2 OFFSET $3`,
-    [`%${search}%`, limit, offset]
-  );
+  if (loading) {
+    return <div className="p-10 text-center">Cargando...</div>;
+  }
 
   return (
     <div className="p-10 bg-white min-h-screen text-black font-sans">
       <Link href="/" className="text-blue-600 hover:underline">← Volver al Dashboard</Link>
-      
+
       <header className="mt-6 mb-8 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold"> Ranking de Productos</h1>
           <p className="text-gray-500 italic">Insight: Productos más exitosos por ingresos y unidades.</p>
         </div>
-        
+
         <form className="flex gap-2">
-          <input 
-            type="text" 
-            name="search" 
-            placeholder="Buscar producto..." 
+          <input
+            type="text"
+            name="search"
+            placeholder="Buscar producto..."
             defaultValue={search}
             className="border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
@@ -46,7 +47,7 @@ export default async function RankingReport({ searchParams }: Props) {
         </form>
       </header>
 
-    
+
       <div className="mb-8 p-6 bg-yellow-50 border border-yellow-200 rounded-2xl shadow-sm">
         <h3 className="text-yellow-700 font-bold uppercase text-xs tracking-widest">Producto Estrella</h3>
         <p className="text-3xl font-black text-gray-900 mt-1">
@@ -80,13 +81,13 @@ export default async function RankingReport({ searchParams }: Props) {
       <div className="mt-6 flex justify-between items-center">
         <p className="text-sm text-gray-500">Mostrando página {page}</p>
         <div className="flex gap-2">
-          <Link 
+          <Link
             href={`?search=${search}&page=${Math.max(1, page - 1)}`}
             className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
           >
             Anterior
           </Link>
-          <Link 
+          <Link
             href={`?search=${search}&page=${page + 1}`}
             className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
           >

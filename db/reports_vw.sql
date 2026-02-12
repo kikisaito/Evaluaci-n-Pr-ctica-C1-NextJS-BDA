@@ -9,7 +9,7 @@ FROM orders o
 JOIN payments p ON o.id = p.order_id
 GROUP BY DATE(o.created_at);
 
-CREATE OR REPLACE VIEW vw_top_products_ranked AS
+CREATE OR REPLACE VIEW vw_top_products_ranked AS 
 SELECT 
     p.name AS producto,
     SUM(oi.qty) AS unidades_vendidas,

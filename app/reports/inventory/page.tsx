@@ -1,14 +1,28 @@
-import { pool } from '@/lib/db';
+'use client';
 import Link from 'next/link';
-export const dynamic = 'force-dynamic';
+import { useState, useEffect } from 'react';
 
-export default async function InventoryReport() {
-  const { rows } = await pool.query('SELECT * FROM vw_inventory_risk');
+import { fetchInventory } from '@/app/services/api';
+
+export default function InventoryReport() {
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchInventory().then(data => {
+      setRows(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return <div className="p-10 text-center">Cargando...</div>;
+  }
 
   return (
     <div className="p-10 bg-white min-h-screen text-black font-sans">
       <Link href="/" className="text-blue-600 hover:underline">← Volver al Dashboard</Link>
-      
+
       <header className="mt-6 mb-8">
         <h1 className="text-3xl font-bold">:3 Riesgo de Inventario</h1>
         <p className="text-gray-500 italic">Insight: Identificación de productos con existencias críticas.</p>
@@ -35,11 +49,10 @@ export default async function InventoryReport() {
                 <td className="p-4 border-b font-medium">{row.producto}</td>
                 <td className="p-4 border-b">{row.stock} unidades</td>
                 <td className="p-4 border-b">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    row.nivel_alerta === 'Agotado' || row.nivel_alerta === 'Riesgo Crítico' 
-                    ? 'bg-red-100 text-red-700' 
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${row.nivel_alerta === 'Agotado' || row.nivel_alerta === 'Riesgo Crítico'
+                    ? 'bg-red-100 text-red-700'
                     : 'bg-yellow-100 text-yellow-700'
-                  }`}>
+                    }`}>
                     {row.nivel_alerta}
                   </span>
                 </td>

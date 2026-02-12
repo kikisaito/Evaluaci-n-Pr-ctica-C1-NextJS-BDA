@@ -1,15 +1,28 @@
-import { pool } from '@/lib/db';
+'use client';
 import Link from 'next/link';
-export const dynamic = 'force-dynamic';
+import { useState, useEffect } from 'react';
 
-export default async function PaymentsReport() {
-  // Consumimos la VIEW de mezcla de pagos :3
-  const { rows } = await pool.query('SELECT * FROM vw_payment_mix');
+import { fetchPayments } from '@/app/services/api';
+
+export default function PaymentsReport() {
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPayments().then(data => {
+      setRows(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return <div className="p-10 text-center">Cargando...</div>;
+  }
 
   return (
     <div className="p-10 bg-white min-h-screen text-black font-sans">
       <Link href="/" className="text-blue-600 hover:underline">← Volver al Dashboard</Link>
-      
+
       <header className="mt-6 mb-8">
         <h1 className="text-3xl font-bold">Mezcla de Pagos</h1>
         <p className="text-gray-500 italic">Insight: Distribución de ingresos por método de pago.</p>
